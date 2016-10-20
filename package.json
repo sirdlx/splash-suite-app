@@ -1,0 +1,68 @@
+{
+  "name": "splash-suite-app",
+  "version": "0.0.1",
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
+  "main": "main.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "compression": "^1.6.2",
+    "cors": "^2.8.1",
+    "feathers": "^2.0.2",
+    "feathers-configuration": "^0.3.3",
+    "feathers-errors": "^2.4.0",
+    "feathers-hooks": "^1.5.8",
+    "feathers-mongoose": "^3.5.2",
+    "feathers-nedb": "^2.5.1",
+    "feathers-rest": "^1.5.0",
+    "feathers-socketio": "^1.4.1",
+    "mongoose": "^4.6.3",
+    "nedb": "^1.8.0",
+    "react-tap-event-plugin": "^1.0.0",
+    "serve-favicon": "^2.3.0",
+    "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "classnames": "^2.2.5",
+    "electron-connect": "^0.6.0",
+    "electron-debug": "^1.0.1",
+    "electron-devtools-installer": "^2.0.1",
+    "gulp": "^3.9.1",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-mdl": "^1.7.2",
+    "react-redux": "^4.4.5",
+    "react-router": "^2.8.1",
+    "react-scripts": "^0.6.1",
+    "redux": "^3.6.0",
+    "jshint": "^2.9.3",
+    "mocha": "^3.1.2",
+    "request": "^2.75.0"
+  },
+  "scripts": {
+    "start": "gulp",
+    "react": "react-scripts start",
+    "electron": "gulp electron:dev",
+    "electron:built": "gulp electron:built",
+    "api": "gulp api:dev",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devdlx/splash-suite-app.git"
+  },
+  "keywords": [
+    "react",
+    "electron",
+    "es6",
+    "babel",
+    "react-scripts"
+  ],
+  "author": "dev@dlxstudios.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/devdlx/splash-suite-app/issues"
+  },
+  "homepage": "/"
+}

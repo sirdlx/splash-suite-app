@@ -1,30 +1,36 @@
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
+#======================================
+# Directories
+#--------------------------------------
+coverage/
+node_modules/
+target/
+tmp/
 
-# Folder config file
-Desktop.ini
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
+#======================================
+# Extensions
+#--------------------------------------
+*.gz
+*.log
+*.rar
+*.tar
+*.zip
 
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
 
-# Windows shortcuts
-*.lnk
+#======================================
+# IDE generated
+#--------------------------------------
+.idea/
+.project
+*.iml
 
-# =========================
-# Operating System Files
-# =========================
 
-# OSX
-# =========================
-
+#======================================
+# OS generated
+#--------------------------------------
+__MACOSX/
 .DS_Store
+Thumbs.db
 .AppleDouble
 .LSOverride
 
