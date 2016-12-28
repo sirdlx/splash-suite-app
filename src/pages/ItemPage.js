@@ -22,6 +22,7 @@ import {Link} from 'react-router'
 //     MenuItem } from 'react-mdl'; import {getColorClass, getTextColorClass}
 // from '../util'; import {Link} from 'react-router'
 // {this.renderActiveTabContent()}
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const styles = {
     root: {
@@ -75,6 +76,7 @@ class ItemPage extends React.Component {
         // setInterval(this.loadItems, this.props.pollInterval);
         this.handleResize();
         window.addEventListener('resize', this.handleResize.bind(this));
+        console.log(this.props.params);
     }
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleResize.bind(this));
@@ -125,8 +127,7 @@ class ItemPage extends React.Component {
         const socket = window.io('http://localhost:9901');
         const app = feathers()
         // Set up socket.io
-            .configure(socketio(socket))
-            .configure(rx(RxJS))
+            .configure(socketio(socket)).configure(rx(RxJS))
 
         // // Register hooks module app.configure(feathers.hooks()); // Register
         // socket.io
@@ -136,52 +137,43 @@ class ItemPage extends React.Component {
 
         const itemsService = app.service('items');
 
-        itemsService.on('created', function (item) {
+        itemsService.on('created', function(item) {
             console.log('Someone created a item', item);
         });
 
-        itemsService
-            .find({})
-            .then((e) => {
-                console.log(e);
-                this.setState({item: e.data})
-                //console.log(this.state)
-                this.setState({itemsArray: e.data});
-            });
+        itemsService.find({}).then((e) => {
+            // console.log(e);
+            this.setState({item: e.data})
+            //console.log(this.state)
+            this.setState({itemsArray: e.data});
+        });
 
     }
 
     render() {
         return (
+            <MuiThemeProvider>
 
-            <div style={styles.root} id='GridWrapper'>
-                <GridList
-                    cols={this.state.gridCols}
-                    padding={16}
-                    style={styles.gridList}
-                    cellHeight={250}>
+                <div style={styles.root} id='GridWrapper'>
 
-                    <GridTile
-                        actionPosition="left"
-                        titlePosition="top"
-                        style={styles.tile}>
-                        <Link to={'/item/'}  style={styles.tileLink}>
-                            <CardMedia>
-                                <img alt="" src={'imageurl'}/>
-                            </CardMedia>
+                    <GridList cols={this.state.gridCols} padding={16} style={styles.gridList}>
 
-                            <CardHeader
-                                title={'title'}
-                                subtitle={'item.price'}
-                                textStyle={styles.headerText}/>
+                        <GridTile actionPosition="left" titlePosition="top" style={styles.tile}>
+                            <Link to={'/item/'} style={styles.tileLink}>
+                                <CardMedia>
+                                    <img alt="" src={'imageurl'}/>
+                                </CardMedia>
 
-                            <div></div>
+                                <CardHeader title={'title'} subtitle={'item.price'} textStyle={styles.headerText}/>
 
-                        </Link>
-                    </GridTile>
+                                <div></div>
 
-                </GridList>
-            </div>
+                            </Link>
+                        </GridTile>
+
+                    </GridList>
+                </div>
+            </MuiThemeProvider>
 
         );
     }

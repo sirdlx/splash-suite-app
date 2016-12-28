@@ -5,6 +5,8 @@ var electron = require('electron-connect')
   .server
   .create();
 
+  // Electron
+
 gulp.task('electron:dev', function () {
 
   // Start browser process
@@ -17,7 +19,7 @@ gulp.task('electron:dev', function () {
   ], electron.restart);
 
   // Reload renderer process
-  gulp.watch(['src/**'], electron.reload);
+  gulp.watch(['src/static/**'], electron.reload);
 
 });
 
@@ -31,7 +33,10 @@ gulp.task('reload:renderer', function () {
   electron.reload();
 });
 
-gulp.task('api:dev', function () {
+
+// Api
+
+gulp.task('api', function () {
   // Run featherjs server
 
 const feathers = require('feathers');
@@ -48,26 +53,97 @@ const socketio = require('feathers-socketio');
 // const db = require('./services');
 const dbService = require('feathers-nedb');
 const NeDB = require('nedb');
-const db = new NeDB({filename: 'db-data/data', autoload: true});
+
+const itemsDB = new NeDB({filename: 'db-data/items', autoload: true});
+const listDB = new NeDB({filename: 'db-data/list', autoload: true});
+
 
 const host = process.env.HOST || "0.0.0.0"
-const apiPort = process.env.API || "9901"
+const apiPort = process.env.API_PORT || "9901"
 
 const api = feathers();
 
-const whitelist = api.get('corsWhitelist');
-const corsOptions = {
-  origin(origin, callback) {
-    const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
-    callback(null, originIsWhitelisted);
-  }
-};
+// const whitelist = api.get('corsWhitelist');
+// const corsOptions = {
+//   origin(origin, callback) {
+//     const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+//     callback(null, originIsWhitelisted);
+//   }
+// };
 
 
 api
     .use(compress())
-    .options('*', cors(corsOptions))
-    .use(cors(corsOptions))
+    // .options('*', cors(corsOptions))
+    // .use(cors(corsOptions))
+    .use(bodyParser.json())
+    .use(bodyParser.urlencoded({extended: true}))
+    .configure(hooks())
+    .configure(rest())
+    .configure(socketio())
+    .use('items', dbService({
+      Model: itemsDB,
+      paginate: {
+        default: 20,
+        max: 100
+      }
+    }))
+
+    .use('list', dbService({
+      Model: listDB,
+      paginate: {
+        default: 100,
+        max: 100
+      }
+    }))
+
+ api.listen(apiPort, host, function () {
+    console.log('API started', host + ":" + apiPort);
+  });
+
+  //gulp.watch(['./api/src/**', './src/**'], electron.reload);
+});
+
+
+
+// shell:browser:dev
+gulp.task('browser:dev', function () {
+  // Run featherjs server
+const path = require('path');
+const feathers = require('feathers');
+const serveStatic = feathers.static;
+const favicon = require('serve-favicon');
+const compress = require('compression');
+const cors = require('cors');
+
+const configuration = require('feathers-configuration');
+const hooks = require('feathers-hooks');
+const rest = require('feathers-rest');
+const bodyParser = require('body-parser');
+const socketio = require('feathers-socketio');
+const dbService = require('feathers-nedb');
+const NeDB = require('nedb');
+const db = new NeDB({filename: 'db-data/data', autoload: true});
+
+const host = process.env.HOST || "localhost"
+const apiPort = process.env.API_PORT || "9901"
+
+const api = feathers();
+
+// const whitelist = api.get('corsWhitelist');
+// const corsOptions = {
+//   origin(origin, callback) {
+//     const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+//     callback(null, originIsWhitelisted);
+//   }
+// };
+
+// api.configure(configuration(path.join(__dirname, './')));
+api
+    .use(compress())
+    // .options('*', cors(corsOptions))
+    // .use(cors(corsOptions))
+    .use('/', serveStatic(path.join( __dirname , 'src/static' )))
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({extended: true}))
     .configure(hooks())
@@ -76,23 +152,21 @@ api
     .use('items', dbService({
       Model: db,
       paginate: {
-        default: 25,
+        default: 50,
         max: 100
       }
     }));
 
  api.listen(apiPort, host, function () {
-    console.log('API started', host + ":" + apiPort);
+    console.log('Http(s) API Server started', host + ":" + apiPort);
   });
 
-  gulp.watch(['./api/src/**', './public/**'], electron.reload);
+  //gulp.watch(['./api/src/**', './public/**'], electron.reload);
 });
 
 
-// server
-
-
-gulp.task('server', function () {
+// shell:browser:prod
+gulp.task('browser:prod', function () {
   // Run featherjs server
 const path = require('path');
 const feathers = require('feathers');
@@ -111,19 +185,19 @@ const NeDB = require('nedb');
 const db = new NeDB({filename: 'db-data/data', autoload: true});
 
 const host = process.env.HOST || "0.0.0.0"
-const apiPort = process.env.API || "9901"
+const apiPort = process.env.API_PORT || "9901"
 
 const api = feathers();
 
-const whitelist = api.get('corsWhitelist');
-const corsOptions = {
-  origin(origin, callback) {
-    const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
-    callback(null, originIsWhitelisted);
-  }
-};
+// const whitelist = api.get('corsWhitelist');
+// const corsOptions = {
+//   origin(origin, callback) {
+//     const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+//     callback(null, originIsWhitelisted);
+//   }
+// };
 
-api.configure(configuration(path.join(__dirname, './')));
+// api.configure(configuration(path.join(__dirname, './')));
 api
     .use(compress())
     // .options('*', cors(corsOptions))
@@ -143,10 +217,10 @@ api
     }));
 
  api.listen(apiPort, host, function () {
-    console.log('API started', host + ":" + apiPort);
+    console.log('Http(s) API Server started', host + ":" + apiPort);
   });
 
-  gulp.watch(['./api/src/**', './public/**'], electron.reload);
+  //gulp.watch(['./api/src/**', './public/**'], electron.reload);
 });
 
 // deploy
@@ -198,12 +272,9 @@ gulp.task('deploy:fb', function () {
 
 });
 
+gulp.task('default', ['shell:electron:dev']);
+gulp.task('shell:electron:dev', ['electron:dev']);
 
-
-
-
-
-gulp.task('default', ['electron-dev']);
-gulp.task('electron-dev', ['api:dev', 'electron:dev']);
-gulp.task('web-dev', ['api:dev']);
-
+//gulp.task('shell:electron:dev', ['api', 'electron:dev']);
+gulp.task('shell:browser:dev', ['api', 'browser:dev']);
+gulp.task('shell:browser', ['api', 'browser:prod']);

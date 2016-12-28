@@ -15,21 +15,23 @@ process.env.NODE_ENV = 'development';
 // Load environment variables from .env file. Suppress warnings using silent if
 // this file is missing. dotenv will never modify any environment variables that
 // have already been set. https://github.com/motdotla/dotenv
-require('./node_modules/react-scripts/node_modules/dotenv').config({silent: true});
-// react-scripts
-var chalk = require('./node_modules/react-scripts/node_modules/chalk');
-var webpack = require('./node_modules/react-scripts/node_modules/webpack');
-var WebpackDevServer = require('./node_modules/react-scripts/node_modules/webpack-dev-server');
-var historyApiFallback = require('./node_modules/react-scripts/node_modules/connect-history-api-fallback');
-var httpProxyMiddleware = require('./node_modules/react-scripts/node_modules/http-proxy-middleware');
-var detect = require('./node_modules/react-scripts/node_modules/detect-port');
-var clearConsole = require('./node_modules/react-scripts/node_modules/react-dev-utils/clearConsole');
-var checkRequiredFiles = require('./node_modules/react-scripts/node_modules/react-dev-utils/checkRequiredFiles');
-var formatWebpackMessages = require('./node_modules/react-scripts/node_modules/react-dev-utils/formatWebpackMessages');
-var openBrowser = require('./node_modules/react-scripts/node_modules/react-dev-utils/openBrowser');
-var prompt = require('./node_modules/react-scripts/node_modules/react-dev-utils/prompt');
-var config = require('./node_modules/react-scripts/config/webpack.config.dev');
-var paths = require('./node_modules/react-scripts/config/paths');
+require('dotenv').config({
+    silent: true
+});
+// create-react-app/packages/react-scripts
+const chalk = require('chalk');
+const webpack = require('webpack');
+const WebpackDevServer = require('webpack-dev-server');
+const historyApiFallback = require('connect-history-api-fallback');
+const httpProxyMiddleware = require('http-proxy-middleware');
+const detect = require('detect-port');
+const clearConsole = require('react-dev-utils/clearConsole');
+const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
+const openBrowser = require('react-dev-utils/openBrowser');
+const prompt = require('react-dev-utils/prompt');
+const config = require('./react-scripts/config/webpack.config.dev');
+const paths = require('./react-scripts/config/paths');
 
 const path = require('path');
 const feathers = require('feathers');
@@ -44,7 +46,10 @@ const bodyParser = require('body-parser');
 const socketio = require('feathers-socketio');
 const dbService = require('feathers-nedb');
 const NeDB = require('nedb');
-const db = new NeDB({filename: 'db-data/data', autoload: true});
+const db = new NeDB({
+    filename: 'db-data/data',
+    autoload: true
+});
 
 // Warn and crash if required files are missing
 if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
@@ -53,9 +58,9 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 
 // Tools like Cloud9 rely on this. var DEFAULT_PORT = process.env.PORT || 3000;
 
-var protocol = process.env.HTTPS === 'true'
-    ? "https"
-    : "http";
+var protocol = process.env.HTTPS === 'true' ?
+    "https" :
+    "http";
 var host = process.env.HOST || 'localhost';
 var port = process.env.PORT || 9900;
 
@@ -69,7 +74,7 @@ var isSmokeTest = process
     .argv
     .some(arg => arg.indexOf('--smoke-test') > -1);
 if (isSmokeTest) {
-    handleCompile = function (err, stats) {
+    handleCompile = function(err, stats) {
         if (err || stats.hasErrors() || stats.hasWarnings()) {
             process.exit(1);
         } else {
@@ -87,14 +92,14 @@ function setupCompiler(host, port, protocol) {
     // recompiling a bundle. WebpackDevServer takes care to pause serving the
     // bundle, so if you refresh, it'll wait instead of serving the old one.
     // "invalid" is short for "bundle invalidated", it doesn't imply any errors.
-    compiler.plugin('invalid', function () {
+    compiler.plugin('invalid', function() {
         //clearConsole();
         console.log('Compiling...');
     });
 
     // "done" event fires when Webpack has finished recompiling the bundle. Whether
     // or not you have warnings or errors, you will get this event.
-    compiler.plugin('done', function (stats) {
+    compiler.plugin('done', function(stats) {
         // clearConsole(); We have switched off the default Webpack output in
         // WebpackDevServer options so we are going to "massage" the warnings and errors
         // and present them in a readable focused way.
@@ -140,16 +145,17 @@ function setupCompiler(host, port, protocol) {
             // file.');
         }
     });
+    runDevServer(host, port, protocol);
 }
 
 // We need to provide a custom onError function for httpProxyMiddleware. It
 // allows us to log custom error messages on the console.
 function onProxyError(proxy) {
-    return function (err, req, res) {
+    return function(err, req, res) {
         var host = req.headers && req.headers.host;
         console.log(chalk.red('Proxy error:') + ' Could not proxy request ' + chalk.cyan(req.url) + ' from ' + chalk.cyan(host) + ' to ' + chalk.cyan(proxy) + '.');
         console.log('See https://nodejs.org/api/errors.html#errors_common_system_errors for more info' +
-                'rmation (' + chalk.cyan(err.code) + ').');
+            'rmation (' + chalk.cyan(err.code) + ').');
         console.log();
 
         // And immediately send the proper error response to the client. Otherwise, the
@@ -176,9 +182,7 @@ function addMiddleware(devServer) {
         // into `accept` header when navigating. However API calls like `fetch()` won’t
         // generally accept text/html. If this heuristic doesn’t work well for you,
         // don’t use `proxy`.
-        htmlAcceptHeaders: proxy
-            ? ['text/html']
-            : ['text/html', '*/*']
+        htmlAcceptHeaders: proxy ? ['text/html'] : ['text/html', '*/*']
     }));
     if (proxy) {
         if (typeof proxy !== 'string') {
@@ -196,15 +200,15 @@ function addMiddleware(devServer) {
         // https://jex.im/regulex/ to visualize the regex
         var mayProxy = /^(?!\/(index\.html$|.*\.hot-update\.json$|sockjs-node\/)).*$/;
         devServer.use(mayProxy,
-        // Pass the scope regex both to Express and to the middleware for proxying of
-        // both HTTP and WebSockets to work without false positives.
-        httpProxyMiddleware(pathname => mayProxy.test(pathname), {
-            target: proxy,
-            logLevel: 'silent',
-            onError: onProxyError(proxy),
-            secure: false,
-            changeOrigin: true
-        }));
+            // Pass the scope regex both to Express and to the middleware for proxying of
+            // both HTTP and WebSockets to work without false positives.
+            httpProxyMiddleware(pathname => mayProxy.test(pathname), {
+                target: proxy,
+                logLevel: 'silent',
+                onError: onProxyError(proxy),
+                secure: false,
+                changeOrigin: true
+            }));
     }
     // Finally, by now we have certainly resolved the URL. It may be /index.html, so
     // let the dev server try serving it again.
@@ -266,37 +270,19 @@ function runDevServer(host, port, protocol) {
         clearConsole();
         console.log(chalk.cyan('Starting the development server...'));
         console.log(protocol + '://' + host + ':' + port + '/')
-        // console.log(chalk.cyan(process.versions));
-        // console.log(chalk.cyan(process.argv.join(', ')));
-        // console.log(devServer.app);
-        // openBrowser(protocol + '://' + host + ':' + port + '/');
-        // console.log(devServer)
+            // console.log(chalk.cyan(process.versions));
+            // console.log(chalk.cyan(process.argv.join(', ')));
+            // console.log(devServer.app);
+            // openBrowser(protocol + '://' + host + ':' + port + '/');
+            // console.log(devServer)
 
     });
+mainWindow.show();
+    mainWindow.loadURL(protocol + '://' + host + ':' + port);
 
-   
 }
 
-function run(port) {
-    setupCompiler(host, port, protocol);
-    runDevServer(host, port, protocol);
-    startElectron(host, port, protocol);
-}
 
-const DEFAULT_PORT = port;
-detect(DEFAULT_PORT).then(port => {
-    if (port === DEFAULT_PORT) {
-        run(port);
-        return;
-    }
-    // clearConsole();
-    var question = chalk.yellow('Something is already running on port ' + DEFAULT_PORT + '.') + '\n\nWould you like to run the app on another port instead?';
-    prompt(question, true).then(shouldChangePort => {
-        if (shouldChangePort) {
-            run(port);
-        }
-    });
-});
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -318,15 +304,15 @@ function startElectron(host, port) {
     app.on('ready', createWindow(host, port));
 
     // Quit when all windows are closed.
-    app.on('window-all-closed', function () {
+    app.on('window-all-closed', function() {
         // On OS X it is common for applications and their menu bar to stay active until
         // the user quits explicitly with Cmd + Q
-        if (process.platform !== 'darwin') {
-            app.quit()
-        }
+        //if (process.platform !== 'darwin') {
+        app.quit()
+            //}
     })
 
-    app.on('activate', function () {
+    app.on('activate', function() {
         // On OS X it's common to re-create a window in the app when the dock icon is
         // clicked and there are no other windows open.
         if (mainWindow === null) {
@@ -335,34 +321,87 @@ function startElectron(host, port) {
     })
 
     function createWindow(host, port) {
-        // Create the browser window.
-        mainWindow = new BrowserWindow({width: 800, height: 600, show: false}).once('ready-to-show', () => {
-            mainWindow.show();
+
+        var path = require("path");
+        var fs = require("fs");
+        var initPath = path.join(__dirname, "init.json");
+        var data = {
+            bounds: {
+                width: 800,
+                height: 600
+            }
+        };
+        try {
+            data = JSON.parse(fs.readFileSync(initPath, 'utf8'));
+        } catch (e) {
+            fs.writeFileSync(initPath, JSON.stringify(data));
+        }
+
+        mainWindow = new BrowserWindow((data && data.bounds) ? data.bounds : {
+                width: 100,
+                height: 200
+            })
+            // Create the browser window.
+            // mainWindow = new BrowserWindow({
+            //     width: 800,
+            //     height: 600,
+            //     show: false
+            // })
+            .once('ready-to-show', () => {
+                mainWindow.show();
+            })
+
+        // Emitted when the window is closed.
+
+        .on('closed', function() {
+            // fs.writeFileSync(initPath, JSON.stringify({
+            //     bounds: mainWindow.getBounds()
+            // }));
+
+            // Dereference the window object, usually you would store windows in an array if
+            // your app supports multi windows, this is the time when you should delete the
+            // corresponding element.
+            mainWindow = null
         });
 
-        mainWindow.setMenu(null);
 
-        // and load the index.html of the app.
-        mainWindow.loadURL(protocol + '://' + host + ':' + port);
-        // BrowserWindow.addDevToolsExtension("C:\\Users\\10gold\\AppData\\Local\\Google
-        // \\Chrome\\User
-        // Data\\Default\\Extensions\\fmkadmapgofadopljbjfkapdkoienihi\\");
-        // mainWindow.loadURL(path.join(__dirname, '/index.html')); Open the DevTools.
+        mainWindow.setMenu(null);
         if (process.env.NODE_ENV === 'development') {
+            // mainWindow.loadURL(path.join('file:///', __dirname, 'src/app/electron/index.html'));
             mainWindow
                 .webContents
                 .openDevTools();
+        } else {
+            //mainWindow.loadURL(protocol + '://' + host + ':' + port);
         }
 
-        // Emitted when the window is closed.
-        mainWindow
-            .on('closed', function () {
-                // Dereference the window object, usually you would store windows in an array if
-                // your app supports multi windows, this is the time when you should delete the
-                // corresponding element.
-                mainWindow = null
-            });
+
+        setupCompiler(host, port, protocol)
+
+
 
     }
 
 }
+
+
+function run(port) {
+    startElectron(host, port, protocol);
+    //setupCompiler(host, port, protocol);
+    //runDevServer(host, port, protocol);
+}
+
+const DEFAULT_PORT = port;
+detect(DEFAULT_PORT).then(port => {
+    if (port === DEFAULT_PORT) {
+        run(port);
+        return;
+    }
+    // clearConsole();
+    var question = chalk.yellow('Something is already running on port ' + DEFAULT_PORT + '.') + '\n\nWould you like to run the app on another port instead?';
+    prompt(question, true).then(shouldChangePort => {
+        if (shouldChangePort) {
+            run(port);
+        }
+    });
+});

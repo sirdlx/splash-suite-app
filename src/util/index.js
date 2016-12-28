@@ -10,3 +10,9 @@ export function getTextColorClass(color, level) {
     const lvlClass = (level) ? `-${level}` : '';
     return `mdl-color-text--${color}${lvlClass}`;
 }
+
+export function isDesktop(){
+      if(window && window.process && window.process.type){
+        return window.process.type === 'renderer';
+      }
+}

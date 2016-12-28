@@ -1,211 +1,70 @@
 import React from 'react';
 
-//import classNames from 'classnames';
-
-const feathers = require('feathers/client');
-import socketio from 'feathers-socketio/client';
-const rx = require('feathers-reactive');
-const RxJS = require('rxjs');
-
-//import ItemCard from '../views/itemCard2';
-import {
-    //Card,
-    //CardActions,
-    CardHeader,
-    CardMedia,
-    //CardTitle,
-    //CardText
-} from 'material-ui/Card';
-//import FlatButton from 'material-ui/FlatButton';
-
-import {Link} from 'react-router'
-// import {FABButton, Icon} from 'react-mdl'; import {     Grid,     Cell,
-// Button,     IconButton,     Icon,     Card,  CardText,     CardActions, Menu,
-//     MenuItem } from 'react-mdl'; import {getColorClass, getTextColorClass}
-// from '../util'; import {Link} from 'react-router'
-// {this.renderActiveTabContent()}
-
-
-
-const styles = {
-    root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around'
-    },
-    gridList: {
-        margin:0,
-        //paddingLeft: 12,
-        //paddingRight: 12,
-        paddingTop: 28
-    },
-
-    tileLink: {
-        display: 'block',
-        padding: 2,
-        textDecoration: 'none',
-        color: 'inherit'
-    },
-    tile: {
-        marginBottom: 16,
-        padding: 0
-    },
-    headerText: {
-        padding: 0
-    },
-    cardSubtitle: {
-        paddingLeft: 8,
-        fontSize: 12,
-        color: 'darkgrey',
-        textAlign: 'right'
-
-    }
-};
-
-import {GridList, GridTile} from 'material-ui/GridList';
+import {Card, Icon, Image, Grid, wrap} from 'semantic-ui-react'
+import 'semantic-ui-css/semantic.min.css'
 
 class IndexPage extends React.Component {
-    constructor(props) {
-        super(props);
-        // console.log(props)
-        this.state = {
-            itemsArray: [],
-            gridCols: 2
+
+    getStyles() {
+        return {
+
+            root: {
+                //margin: 0,
+                //padding: 16,
+                color: 'white',
+                //height: 'calc(100vh - 32px)'
+            },
+
+            textBox: {
+                margin: 0,
+                fontSize: 36
+            }
+
         }
-
-    }
-
-    componentDidMount() {
-        this.loadItems();
-        // setInterval(this.loadItems, this.props.pollInterval);
-        this.handleResize();
-        window.addEventListener('resize', this.handleResize.bind(this));
-    }
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleResize.bind(this));
-    }
-
-    handleResize(e) {
-        let grid = document.getElementById('GridWrapper');
-        let width = grid.offsetWidth;
-        let cols = 2;
-        if (width < 426) {
-            this.setState({gridCols: cols});
-            //console.log('small')
-            return;
-        }
-
-        if (width < 769) {
-            cols = 3;
-            this.setState({gridCols: cols});
-            //console.log('med')
-            return;
-        }
-
-
-        if (width < 1024) {
-            cols = 4;
-            this.setState({gridCols: cols});
-            //console.log('large')
-            return;
-        }
-
-         if (width < 1625) {
-            cols = 5;
-            this.setState({gridCols: cols});
-            //console.log('xlarge')
-            return;
-        }
-
-         if (width < 2125) {
-            cols = 6;
-            this.setState({gridCols: cols});
-            //console.log('xxlarge')
-            return;
-        }
-
-    }
-
-    loadItems() {
-
-        const socket = window.io('http://localhost:9901');
-        const app = feathers()
-        // Set up socket.io
-            .configure(socketio(socket))
-            .configure(rx(RxJS))
-
-        // // Register hooks module app.configure(feathers.hooks()); // Register
-        // socket.io
-        //
-        // // Set up authentication with a store to cache your auth token
-        // app.configure(feathers.authentication({     storage: window.localStorage }));
-
-        const itemsService = app.service('items');
-
-        itemsService.on('created', function (item) {
-            console.log('Someone created a item', item);
-        });
-
-        itemsService
-            .find({})
-            .then((e) => {
-                console.log(e);
-                this.setState({item: e.data})
-                //console.log(this.state)
-                this.setState({itemsArray: e.data});
-            });
-
     }
 
     render() {
+        let styles = this.getStyles();
+        const colors = [
+            'red',
+            'orange',
+            'yellow',
+            'olive',
+            'green',
+            'teal',
+            'blue',
+            'violet',
+            'purple',
+            'pink',
+            'brown',
+            'grey',
+            'black'
+        ];
         return (
+            <div style={styles.root}>
+                <p style={styles.textBox}>Splash</p>
 
-            <div style={styles.root} id='GridWrapper'>
-                <GridList cols={this.state.gridCols} padding={16} style={styles.gridList} cellHeight={250}>
-                    {this
-                        .state
-                        .itemsArray
-                        .map((item) => (
+                <Grid columns={8} padded>
+                    {colors.map(color => (
+                        <Grid.Column key={color}>
+                            <div className="ui card">
+                                <a className="image" href="#linkFromImage">
+                                    <img src="http://semantic-ui.com/images/avatar/large/steve.jpg"/>
+                                </a>
+                                <div className="content">
+                                    <a className="header" href="#linkFromHeader">Steve Jobes</a>
+                                    <div className="meta">
+                                        <a className="time" href="#linkFromRecent">Last Seen 2 days ago</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </Grid.Column>
+                    ))}
+                </Grid>
 
-                            <GridTile
-                                actionPosition="left"
-                                titlePosition="top"
-                                cols={item.featured
-                                ? 2
-                                : 1}
-                                rows={item.featured
-                                ? 2
-                                : 1}
-                                style={styles.tile}
-                                key={item._id}>
-                                <Link to={'/item/' + item._id} key={item._id} style={styles.tileLink}>
-                                    <CardMedia>
-                                        <img alt="" src={item.image}/>
-                                    </CardMedia>
-
-                                    <CardHeader
-                                        title={item.title}
-                                        subtitle={item.price}
-                                        textStyle={styles.headerText}/>
-
-                                    <div></div>
-
-                                </Link>
-                            </GridTile>
-
-                        ))}
-                </GridList>
             </div>
-
         );
     }
 }
 
 export default IndexPage;
-
-// <div style = {{                 display: 'flex',                 flexWrap:
-// 'wrap'             }} > {     this         .state         .itemsArray
-// .map((item) => (<ItemCard key={item.id} data={item}/ >)) } < /div>
-// <CardActions > <FlatButton label="Action1"/> < FlatButton label = "Action2"
-// /> </CardActions> <CardHeader title = "URL Avatar" subtitle = { item.price }
-// avatar = "images/jsa-128.jpg" />
