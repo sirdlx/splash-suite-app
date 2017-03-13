@@ -19,7 +19,7 @@ gulp.task('electron:dev', function () {
   ], electron.restart);
 
   // Reload renderer process
-  gulp.watch(['src/static/**'], electron.reload);
+  gulp.watch(['src/static/**', 'src/app/electron/**'], electron.reload);
 
 });
 

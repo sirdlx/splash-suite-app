@@ -1,6 +1,13 @@
 import React from 'react';
 
-import {Card, Icon, Image, Grid, wrap} from 'semantic-ui-react'
+import {
+    Card,
+    Icon,
+    Image,
+    Grid,
+    wrap,
+    Header
+} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
 class IndexPage extends React.Component {
@@ -9,7 +16,7 @@ class IndexPage extends React.Component {
         return {
 
             root: {
-                //margin: 0,
+                // marginTop: 16,
                 //padding: 16,
                 color: 'white',
                 //height: 'calc(100vh - 32px)'
@@ -17,7 +24,16 @@ class IndexPage extends React.Component {
 
             textBox: {
                 margin: 0,
-                fontSize: 36
+                fontSize: 36,
+                color: 'black'
+            },
+            section: {
+                marginBottom: 16
+            },
+
+            itemGrid: {
+                margin: 0,
+                marginBottom: 16
             }
 
         }
@@ -41,10 +57,22 @@ class IndexPage extends React.Component {
             'black'
         ];
         return (
-            <div style={styles.root}>
-                <p style={styles.textBox}>Splash</p>
+            <Grid columns={1}>
 
-                <Grid columns={8} padded>
+                <Header as='h2'>
+                    <Image src='http://semantic-ui.com/images/avatar2/large/patrick.png'/>
+                    Splash
+                </Header>
+
+                <Grid columns={5}  doubling padded style={styles.section}>
+                    {colors.map(color => (
+                        <Grid.Column color={color} key={color}>
+                            {color}
+                        </Grid.Column>
+                    ))}
+                </Grid>
+
+                <Grid doubling padded columns={8} style={styles.itemGrid}>
                     {colors.map(color => (
                         <Grid.Column key={color}>
                             <div className="ui card">
@@ -62,7 +90,7 @@ class IndexPage extends React.Component {
                     ))}
                 </Grid>
 
-            </div>
+            </Grid>
         );
     }
 }

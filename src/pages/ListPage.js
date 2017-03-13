@@ -63,7 +63,6 @@ const styles = {
     }
 };
 
-import {GridList, GridTile} from 'material-ui/GridList';
 
 window.listPage = {
     lastListName: ''
@@ -195,7 +194,7 @@ class ListPage extends React.Component {
 
     render() {
 
-        
+
         return (
 
                 <div style={styles.root}>

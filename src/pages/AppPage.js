@@ -2,12 +2,7 @@ import React from 'react';
 const splash = require('splash');
 import {Menu, Input, Icon} from 'semantic-ui-react'
 
-import {
-    darkWhite,
-    //lightWhite,
-    //grey900
-} from 'material-ui/styles/colors';
-
+const darkWhite = 'rgba(255,255,255,0.7)';
 class AppPage extends React.Component {
 
     constructor(props) {
@@ -43,15 +38,16 @@ class AppPage extends React.Component {
             },
 
             logoIcon: {
-                margin:0,
+                margin: 0,
                 color: 'rgb(33, 150, 243)'
             },
 
             content: {
-                boxSizing: 'content-box',
+                boxSizing: 'border-box',
                 margin: 0,
                 padding: 16,
-                paddingTop: 64
+                marginTop: 64
+
             },
 
             a: {
@@ -115,9 +111,9 @@ class AppPage extends React.Component {
         const styles = this.getStyles();
 
         return (
-            <Menu stackable style={styles.menu} className={'top fixed'}>
+            <Menu style={styles.menu} className={'top fixed'}>
                 <Menu.Item as='a'>
-                     <Icon name='fire' size='big' style={styles.logoIcon} />
+                    <Icon name='fire' size='big' style={styles.logoIcon}/>
                 </Menu.Item>
 
                 <Menu.Item name='features' active={activeItem === 'features'} onClick={this.handleItemClick}>

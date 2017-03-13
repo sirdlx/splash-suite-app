@@ -1,6 +1,4 @@
 import React from 'react';
-import {GridList, GridTile} from 'material-ui/GridList';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 //import classNames from 'classnames';
 
 const feathers = require('feathers/client');

@@ -8,21 +8,8 @@ const rx = require('feathers-reactive');
 const RxJS = require('rxjs');
 
 //import ItemCard from '../views/itemCard2';
-import {
-    //Card, CardActions,
-    CardHeader,
-    CardMedia,
-    //CardTitle, CardText
-} from 'material-ui/Card';
-//import FlatButton from 'material-ui/FlatButton';
 
 import {Link} from 'react-router'
-// import {FABButton, Icon} from 'react-mdl'; import {     Grid,     Cell,
-// Button,     IconButton,     Icon,     Card,  CardText,     CardActions, Menu,
-//     MenuItem } from 'react-mdl'; import {getColorClass, getTextColorClass}
-// from '../util'; import {Link} from 'react-router'
-// {this.renderActiveTabContent()}
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const styles = {
     root: {
@@ -58,7 +45,6 @@ const styles = {
     }
 };
 
-import {GridList, GridTile} from 'material-ui/GridList';
 
 class ItemPage extends React.Component {
     constructor(props) {

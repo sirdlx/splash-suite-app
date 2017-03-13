@@ -34,22 +34,22 @@ const config = require('./react-scripts/config/webpack.config.dev');
 const paths = require('./react-scripts/config/paths');
 
 const path = require('path');
-const feathers = require('feathers');
-const favicon = require('serve-favicon');
-const compress = require('compression');
-const cors = require('cors');
+// const feathers = require('feathers');
+// const favicon = require('serve-favicon');
+// const compress = require('compression');
+// const cors = require('cors');
 
-const configuration = require('feathers-configuration');
-const hooks = require('feathers-hooks');
-const rest = require('feathers-rest');
-const bodyParser = require('body-parser');
-const socketio = require('feathers-socketio');
-const dbService = require('feathers-nedb');
-const NeDB = require('nedb');
-const db = new NeDB({
-    filename: 'db-data/data',
-    autoload: true
-});
+// const configuration = require('feathers-configuration');
+// const hooks = require('feathers-hooks');
+// const rest = require('feathers-rest');
+// const bodyParser = require('body-parser');
+// const socketio = require('feathers-socketio');
+// const dbService = require('feathers-nedb');
+// const NeDB = require('nedb');
+// const db = new NeDB({
+//     filename: 'db-data/data',
+//     autoload: true
+// });
 
 // Warn and crash if required files are missing
 if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
@@ -93,14 +93,15 @@ function setupCompiler(host, port, protocol) {
     // bundle, so if you refresh, it'll wait instead of serving the old one.
     // "invalid" is short for "bundle invalidated", it doesn't imply any errors.
     compiler.plugin('invalid', function() {
-        //clearConsole();
+        clearConsole();
         console.log('Compiling...');
     });
 
     // "done" event fires when Webpack has finished recompiling the bundle. Whether
     // or not you have warnings or errors, you will get this event.
     compiler.plugin('done', function(stats) {
-        // clearConsole(); We have switched off the default Webpack output in
+        clearConsole();
+        // We have switched off the default Webpack output in
         // WebpackDevServer options so we are going to "massage" the warnings and errors
         // and present them in a readable focused way.
         var messages = formatWebpackMessages(stats.toJson({}, true));
@@ -267,18 +268,18 @@ function runDevServer(host, port, protocol) {
             return console.log(err);
         }
 
-        clearConsole();
+        //clearConsole();
         console.log(chalk.cyan('Starting the development server...'));
         console.log(protocol + '://' + host + ':' + port + '/')
-            // console.log(chalk.cyan(process.versions));
-            // console.log(chalk.cyan(process.argv.join(', ')));
-            // console.log(devServer.app);
-            // openBrowser(protocol + '://' + host + ':' + port + '/');
-            // console.log(devServer)
+        // console.log(chalk.cyan(process.versions));
+        // console.log(chalk.cyan(process.argv.join(', ')));
+        // console.log(devServer.app);
+        // openBrowser(protocol + '://' + host + ':' + port + '/');
+        // console.log(devServer)
 
     });
-mainWindow.show();
-    mainWindow.loadURL(protocol + '://' + host + ':' + port);
+    //mainWindow.show();
+    //mainWindow.loadURL(protocol + '://' + host + ':' + port);
 
 }
 
@@ -309,7 +310,7 @@ function startElectron(host, port) {
         // the user quits explicitly with Cmd + Q
         //if (process.platform !== 'darwin') {
         app.quit()
-            //}
+        //}
     })
 
     app.on('activate', function() {
@@ -321,7 +322,7 @@ function startElectron(host, port) {
     })
 
     function createWindow(host, port) {
-
+        console.log('createWindow called');
         var path = require("path");
         var fs = require("fs");
         var initPath = path.join(__dirname, "init.json");
@@ -351,33 +352,33 @@ function startElectron(host, port) {
                 mainWindow.show();
             })
 
-        // Emitted when the window is closed.
+            // Emitted when the window is closed.
 
-        .on('closed', function() {
-            // fs.writeFileSync(initPath, JSON.stringify({
-            //     bounds: mainWindow.getBounds()
-            // }));
+            .on('closed', function() {
+                // fs.writeFileSync(initPath, JSON.stringify({
+                //     bounds: mainWindow.getBounds()
+                // }));
 
-            // Dereference the window object, usually you would store windows in an array if
-            // your app supports multi windows, this is the time when you should delete the
-            // corresponding element.
-            mainWindow = null
-        });
+                // Dereference the window object, usually you would store windows in an array if
+                // your app supports multi windows, this is the time when you should delete the
+                // corresponding element.
+                mainWindow = null
+            });
 
 
         mainWindow.setMenu(null);
         if (process.env.NODE_ENV === 'development') {
-            // mainWindow.loadURL(path.join('file:///', __dirname, 'src/app/electron/index.html'));
-            mainWindow
-                .webContents
-                .openDevTools();
+            //mainWindow.loadURL(path.join('file:///', __dirname, 'src/app/electron/index.html'));
+            mainWindow.loadURL(protocol + '://' + host + ':' + port);
+            mainWindow.webContents.openDevTools();
         } else {
-            //mainWindow.loadURL(protocol + '://' + host + ':' + port);
+            // mainWindow.loadURL(path.join('file:///', __dirname, 'build/index.html'));
+            // mainWindow.loadURL(protocol + '://' + host + ':' + port);
+            mainWindow.loadURL('http://127.0.0.1:8080');
+            // mainWindow.webContents.openDevTools();
         }
 
-
         setupCompiler(host, port, protocol)
-
 
 
     }
